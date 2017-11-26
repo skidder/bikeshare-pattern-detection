@@ -38,9 +38,9 @@ func main() {
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
+	client := gbfs.NewClient(*feedURL)
 	for {
-		client := gbfs.NewClient(*feedURL)
-		stationInfo, err := client.GetStationStatus("en")
+		gbfsData, err := client.GetCompleteGBFSMessage("en")
 		if err != nil {
 			fmt.Printf("Error while retrieving data: %s", err.Error())
 			return
@@ -56,7 +56,7 @@ func main() {
 		)
 		failOnError(err, "Failed to declare a queue")
 
-		encodedBytes, err := proto.Marshal(stationInfo)
+		encodedBytes, err := proto.Marshal(gbfsData)
 		if err != nil {
 			fmt.Printf("Error while marshalling data to Proto: %v", err.Error())
 			return
