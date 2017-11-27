@@ -50,6 +50,10 @@ services:
 
   influxdb:
     image: influxdb:1.4
+    environment:
+      - INFLUXDB_USER=gbfs
+      - INFLUXDB_PASSWORD=gbfs
+      - INFLUXDB_DB=gbfs
 
   gbfs-feed-consumer:
     image: skidder/gbfs-feed-consumer:latest
