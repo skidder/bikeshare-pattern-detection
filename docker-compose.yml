@@ -48,6 +48,11 @@ services:
   rabbitmq:
     image: rabbitmq:3.6
 
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+
   influxdb:
     image: influxdb:1.4
     environment:
