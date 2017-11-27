@@ -37,7 +37,7 @@ public class RabbitMQSource implements Serializable {
                 .build();
 
         return env
-                .addSource(new RMQSource<>(connectionConfig, "gbfs-feed",
+                .addSource(new RMQSource<>(connectionConfig, "gbfs-complete-feed",
                         new ByteArrayDeserializationSchema()))
                 .uid("rabbitmq-control-source")
                 .name("RabbitMQ Control Source")
