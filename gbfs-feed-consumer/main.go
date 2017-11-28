@@ -14,7 +14,7 @@ import (
 var (
 	feedURL           = flag.String("feed", "https://gbfs.fordgobike.com/gbfs/gbfs.json", "GBFS feed auto-discovery URL")
 	rabbitmqURI       = flag.String("rabbitmq", "amqp://guest:guest@rabbitmq:5672/", "RabbitMQ connection URI")
-	rabbitmqQueueName = flag.String("queue", "gbfs-feed", "RabbitMQ queue name")
+	rabbitmqQueueName = flag.String("queue", "gbfs-complete-feed", "RabbitMQ queue name")
 	startupDelay      = flag.Int64("delay_seconds", 30, "Seconds to delay connection to RabbitMQ on startup")
 	pollingInterval   = flag.Int64("polling_seconds", 60, "Seconds between polling the feed")
 )
