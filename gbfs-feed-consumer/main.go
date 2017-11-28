@@ -39,27 +39,25 @@ func main() {
 	defer ch.Close()
 
 	client := gbfs.NewClient(*feedURL)
+	q, err := ch.QueueDeclare(
+		*rabbitmqQueueName, // name
+		true,               // durable
+		false,              // delete when unused
+		false,              // exclusive
+		false,              // no-wait
+		nil,                // arguments
+	)
+	failOnError(err, "Failed to declare a queue")
+
 	for {
 		gbfsData, err := client.GetCompleteGBFSMessage("en")
 		if err != nil {
-			fmt.Printf("Error while retrieving data: %s", err.Error())
-			return
+			log.Printf("Error while retrieving data: %s", err.Error())
 		}
-
-		q, err := ch.QueueDeclare(
-			*rabbitmqQueueName, // name
-			true,               // durable
-			false,              // delete when unused
-			false,              // exclusive
-			false,              // no-wait
-			nil,                // arguments
-		)
-		failOnError(err, "Failed to declare a queue")
 
 		encodedBytes, err := proto.Marshal(gbfsData)
 		if err != nil {
-			fmt.Printf("Error while marshalling data to Proto: %v", err.Error())
-			return
+			log.Printf("Error while marshalling data to Proto: %v", err.Error())
 		}
 		err = ch.Publish(
 			"",     // exchange
@@ -70,9 +68,12 @@ func main() {
 				ContentType: "application/x-protobuf",
 				Body:        encodedBytes,
 			})
-		failOnError(err, "Failed to publish a message")
+		if err != nil {
+			log.Printf("Failed to publish message: %s", err.Error())
+			continue
+		}
 
-		fmt.Printf("Successfuly sent message to RabbitMQ, sleeping %d seconds\n", *pollingInterval)
+		log.Printf("Successfully sent message to RabbitMQ, sleeping %d seconds\n", *pollingInterval)
 		time.Sleep(time.Second * time.Duration(*pollingInterval))
 	}
 }
